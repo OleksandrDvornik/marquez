@@ -181,8 +181,7 @@ class BigQueryDatasetsProvider:
         ]
         sources = [
             self._source(
-                bq_t,
-                get_from_nullable_chain(properties, ['jobReference', 'projectId'])
+                bq_t
             ) for bq_t in bq_input_tables
         ]
         try:
@@ -211,8 +210,7 @@ class BigQueryDatasetsProvider:
 
         output_table_name = self._bq_table_name(bq_output_table)
         source = self._source(
-            bq_output_table,
-            get_from_nullable_chain(properties, ['user_email'])
+            bq_output_table
         )
 
         table_schema = self._get_table_safely(output_table_name)
@@ -265,11 +263,12 @@ class BigQueryDatasetsProvider:
             columns=columns
         )
 
-    def _source(self, bq_table, name) -> Source:
+    def _source(self, bq_table) -> Source:
+        table_name = self._bq_table_name(bq_table)
         return Source(
-            type="BIGQUERY",
-            name=name,
-            connection_url=_BIGQUERY_CONN_URL.format(self._bq_table_name(bq_table)))
+            scheme='bigquery',
+            connection_url=_BIGQUERY_CONN_URL.format(table_name)
+        )
 
     def _bq_table_name(self, bq_table):
         project = bq_table.get('projectId')

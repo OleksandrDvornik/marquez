@@ -18,6 +18,7 @@ from marquez_airflow.utils import (
     url_to_https,
     get_location,
     get_connection_uri,
+    get_normalized_postgres_connection_uri
 )
 
 AIRFLOW_VERSION = '1.10.12'
@@ -25,7 +26,7 @@ AIRFLOW_CONN_ID = 'test_db'
 AIRFLOW_CONN_URI = 'postgres://localhost:5432/testdb'
 
 
-@mock.patch("marquez_airflow.utils._get_connection")
+@mock.patch("marquez_airflow.utils.get_connection")
 def test_get_connection_uri(mock_get_connection):
     mock_get_connection.return_value = Connection(
         conn_id=AIRFLOW_CONN_ID,
@@ -38,6 +39,11 @@ def test_get_connection_uri_from_env():
     # Set the environment variable as AIRFLOW_CONN_<conn_id>
     os.environ[f"AIRFLOW_CONN_{AIRFLOW_CONN_ID.upper()}"] = AIRFLOW_CONN_URI
     assert get_connection_uri(AIRFLOW_CONN_ID) == AIRFLOW_CONN_URI
+
+
+def test_get_normalized_postgres_connection_uri():
+    os.environ[f"AIRFLOW_CONN_{AIRFLOW_CONN_ID.upper()}"] = 'postgresql://localhost:5432/testdb'
+    assert get_normalized_postgres_connection_uri(AIRFLOW_CONN_ID) == AIRFLOW_CONN_URI
 
 
 def test_get_location_no_file_path():

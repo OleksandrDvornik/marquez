@@ -20,7 +20,6 @@ from airflow.version import version as AIRFLOW_VERSION
 from marquez_airflow import __version__ as MARQUEZ_AIRFLOW_VERSION
 from marquez_client import MarquezClient
 from marquez_client.models import (
-    DatasetType,
     JobType,
     RunState
 )
@@ -133,7 +132,6 @@ def check_datasets_meta():
         'namespace': NAMESPACE_NAME,
         'name': IN_TABLE_NAME
     }
-    assert in_table['type'] == DatasetType.DB_TABLE.value
     assert in_table['name'] == IN_TABLE_NAME
     assert in_table['physicalName'] == IN_TABLE_PHYSICAL_NAME
     assert in_table['namespace'] == NAMESPACE_NAME
@@ -152,7 +150,6 @@ def check_datasets_meta():
         'namespace': NAMESPACE_NAME,
         'name': OUT_TABLE_NAME
     }
-    assert out_table['type'] == DatasetType.DB_TABLE.value
     assert out_table['name'] == OUT_TABLE_NAME
     assert out_table['physicalName'] == OUT_TABLE_PHYSICAL_NAME
     assert out_table['namespace'] == NAMESPACE_NAME

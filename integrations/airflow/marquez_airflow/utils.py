@@ -131,11 +131,23 @@ def get_connection_uri(conn_id):
     """
     conn_uri = os.environ.get('AIRFLOW_CONN_' + conn_id.upper())
     log.debug(conn_uri)
-    return conn_uri or _get_connection(conn_id).get_uri()
+    return conn_uri or get_connection(conn_id).get_uri()
+
+
+def get_normalized_postgres_connection_uri(conn_id):
+    """
+    URIs starting with postgresql:// and postgres:// are both valid
+    PostgreSQL connection strings. This function normalizes it to
+    postgres:// as canonical name according to OpenLineage spec.
+    """
+    uri = get_connection_uri(conn_id)
+    if uri.startswith('postgresql'):
+        uri = uri.replace('postgresql', 'postgres', 1)
+    return uri
 
 
 @provide_session
-def _get_connection(conn_id, session=None):
+def get_connection(conn_id, session=None) -> Connection:
     # TODO: We may want to throw an exception if the connection
     # does not exist (ex: AirflowConnectionException). The connection
     # URI is required when collecting metadata for a data source.

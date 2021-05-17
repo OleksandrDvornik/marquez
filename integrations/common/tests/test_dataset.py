@@ -3,7 +3,7 @@ from openlineage.facet import DataSourceDatasetFacet, SchemaDatasetFacet, Schema
 
 from marquez.models import DbTableName, DbColumn, DbTableSchema
 
-from marquez.dataset import Source, Dataset, DatasetType
+from marquez.dataset import Source, Dataset
 
 from openlineage.run import Dataset as OpenLineageDataset
 
@@ -11,8 +11,7 @@ from openlineage.run import Dataset as OpenLineageDataset
 @pytest.fixture
 def source():
     return Source(
-        type="DummySource",
-        name="dummy_source_name",
+        scheme="dummy",
         connection_url="http://dummy/source/url"
     )
 
@@ -20,8 +19,7 @@ def source():
 @pytest.fixture
 def table_schema():
     source = Source(
-        type="DummySource",
-        name="dummy_source_name",
+        scheme="dummy",
         connection_url="http://dummy/source/url"
     )
 
@@ -64,7 +62,7 @@ def table_schema():
 
 def test_dataset_from(source):
     dataset = Dataset.from_table(source, 'source_table', 'public')
-    assert dataset == Dataset(source=source, type=DatasetType.DB_TABLE, name='public.source_table')
+    assert dataset == Dataset(source=source, name='public.source_table')
 
 
 def test_dataset_to_openlineage(table_schema):

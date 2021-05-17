@@ -231,9 +231,9 @@ class TestFixtureDummyOperator(DummyOperator):
 class TestFixtureDummyExtractor(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
-        type="DummySource",
-        name="dummy_source_name",
-        connection_url="http://dummy/source/url")
+        scheme="dummy",
+        connection_url="http://dummy/source/url"
+    )
 
     def __init__(self, operator):
         super().__init__(operator)
@@ -261,9 +261,9 @@ class TestFixtureDummyExtractor(BaseExtractor):
 class TestFixtureDummyExtractorOnComplete(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
-        type="DummySource",
-        name="dummy_source_name",
-        connection_url="http://dummy/source/url")
+        scheme="dummy",
+        connection_url="http://dummy/source/url"
+    )
 
     def __init__(self, operator):
         super().__init__(operator)
@@ -377,13 +377,13 @@ def test_marquez_dag_with_extractor(
             PRODUCER,
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_input1',
                     uri='http://dummy/source/url'
                 )
             })],
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_output1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_output1',
                     uri='http://dummy/source/url'
                 )
             })]
@@ -410,13 +410,13 @@ def test_marquez_dag_with_extractor(
             PRODUCER,
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_input1',
                     uri='http://dummy/source/url'
                 )
             })],
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_output1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_output1',
                     uri='http://dummy/source/url'
                 )
             })]
@@ -516,7 +516,7 @@ def test_marquez_dag_with_extract_on_complete(
                 name='schema.extract_on_complete_input1',
                 facets={
                     'dataSource': DataSourceDatasetFacet(
-                        name='dummy_source_name',
+                        name='schema.extract_on_complete_input1',
                         uri='http://dummy/source/url'
                     ),
                     'schema': SchemaDatasetFacet(
@@ -532,7 +532,7 @@ def test_marquez_dag_with_extract_on_complete(
                 name='extract_on_complete_output1',
                 facets={
                     'dataSource': DataSourceDatasetFacet(
-                        name='dummy_source_name',
+                        name='extract_on_complete_output1',
                         uri='http://dummy/source/url'
                     )
                 })
@@ -544,9 +544,9 @@ def test_marquez_dag_with_extract_on_complete(
 class TestFixtureDummyExtractorWithMultipleSteps(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
-        type="DummySource",
-        name="dummy_source_name",
-        connection_url="http://dummy/source/url")
+        scheme='dummy',
+        connection_url="http://dummy/source/url"
+    )
 
     def __init__(self, operator):
         super().__init__(operator)
@@ -655,7 +655,7 @@ def test_marquez_dag_with_extractor_returning_two_steps(
             PRODUCER,
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_input1',
                     uri='http://dummy/source/url'
                 )
             })],
@@ -683,7 +683,7 @@ def test_marquez_dag_with_extractor_returning_two_steps(
             PRODUCER,
             [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='dummy_source_name',
+                    name='extract_input1',
                     uri='http://dummy/source/url'
                 )
             })],
@@ -781,8 +781,7 @@ TestFixtureHookingDummyOperator.execute = wrap_callback(TestFixtureHookingDummyO
 class TestFixtureHookingDummyExtractor(BaseExtractor):
     operator_class = TestFixtureHookingDummyOperator
     source = Source(
-        type="DummySource",
-        name="dummy_source_name",
+        scheme="dummy",
         connection_url="http://dummy/source/url")
 
     def __init__(self, operator):

@@ -20,7 +20,7 @@ from marquez.models import (
     DbTableSchema,
     DbColumn
 )
-from marquez_airflow.utils import get_connection_uri
+from marquez_airflow.utils import get_normalized_postgres_connection_uri, get_connection
 from marquez.sql import SqlMeta, SqlParser
 from marquez_airflow.extractors.base import (
     BaseExtractor,
@@ -41,7 +41,6 @@ _UDT_NAME = 4
 class PostgresExtractor(BaseExtractor):
     operator_class = PostgresOperator
     default_schema = 'public'
-    source_type = 'POSTGRESQL'
 
     def __init__(self, operator):
         super().__init__(operator)
@@ -55,9 +54,10 @@ class PostgresExtractor(BaseExtractor):
         # property that is used to override the one defined in the connection.
         conn_id = self._conn_id()
         source = Source(
-            type=self.source_type,
-            name=conn_id,
-            connection_url=get_connection_uri(conn_id))
+            scheme=self._get_scheme(),
+            authority=self._get_authority(conn_id),
+            connection_url=self._get_connection_uri(conn_id)
+        )
 
         # (3) Map input / output tables to dataset objects with source set
         # as the current connection. We need to also fetch the schema for the
@@ -89,6 +89,16 @@ class PostgresExtractor(BaseExtractor):
                 'sql': self.operator.sql
             }
         )
+
+    def _get_connection_uri(self, conn_id):
+        return get_normalized_postgres_connection_uri(conn_id)
+
+    def _get_scheme(self):
+        return f'postgres'
+
+    def _get_authority(self, conn_id):
+        conn = get_connection(conn_id)
+        return f'{conn.host}:{conn.port}'
 
     def _conn_id(self):
         return self.operator.postgres_conn_id

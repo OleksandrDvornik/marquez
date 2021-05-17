@@ -23,7 +23,7 @@ from marquez.models import (
     DbTableSchema,
     DbColumn
 )
-from marquez.dataset import Source, Dataset, DatasetType
+from marquez.dataset import Source, Dataset
 from marquez_airflow.extractors.postgres_extractor import PostgresExtractor
 
 CONN_ID = 'food_delivery_db'
@@ -96,19 +96,21 @@ TASK = PostgresOperator(
 )
 
 
-@mock.patch('marquez_airflow.extractors.postgres_extractor.\
-PostgresExtractor._get_table_schemas')
-def test_extract(mock_get_table_schemas):
+@mock.patch('marquez_airflow.extractors.postgres_extractor.PostgresExtractor._get_table_schemas')
+@mock.patch('marquez_airflow.extractors.postgres_extractor.get_connection')
+def test_extract(get_connection, mock_get_table_schemas):
     mock_get_table_schemas.side_effect = \
         [[DB_TABLE_SCHEMA], NO_DB_TABLE_SCHEMA]
 
+    get_connection.host.return_value = 'localhost'
+    get_connection.host.return_value = '5432'
+
     expected_inputs = [
         Dataset(
-            type=DatasetType.DB_TABLE,
             name=f"{DB_SCHEMA_NAME}.{DB_TABLE_NAME.name}",
             source=Source(
-                type='POSTGRESQL',
-                name=CONN_ID,
+                scheme='postgres',
+                authority='localhost:5432',
                 connection_url=CONN_URI
             ),
             fields=[]
