@@ -101,7 +101,8 @@ def test_great_expectations_operator_with_provided_namespace_success():
                 distinctCount=3
             ),
             'total_amount': ColumnMetric(
-                average=15.724231000000003,
+                sum=157242.31000000003,
+                count=10000,
                 min=-52.8,
                 max=3004.8,
                 quantiles={"0": -52.8, "0.333": 9.3, "0.6667": 14.16, "1": 3004.8}
