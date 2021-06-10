@@ -75,7 +75,7 @@ def test_dataset_to_openlineage(table_schema):
         name='public.discounts',
         facets={
             'dataSource': DataSourceDatasetFacet(
-                name='dummy_source_name',
+                name='public.discounts',
                 uri='http://dummy/source/url'
             ),
             'schema': SchemaDatasetFacet(

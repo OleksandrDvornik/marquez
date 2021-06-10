@@ -94,7 +94,7 @@ class PostgresExtractor(BaseExtractor):
         return get_normalized_postgres_connection_uri(conn_id)
 
     def _get_scheme(self):
-        return f'postgres'
+        return 'postgres'
 
     def _get_authority(self, conn_id):
         conn = get_connection(conn_id)

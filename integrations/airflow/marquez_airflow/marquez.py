@@ -4,7 +4,6 @@ from typing import Optional, Dict, Type
 
 from marquez_airflow.extractors import StepMetadata
 from marquez_airflow import __version__ as MARQUEZ_AIRFLOW_VERSION
-from marquez.dataset import Dataset
 
 from openlineage.client import OpenLineageClient
 from openlineage.facet import DocumentationJobFacet, SourceCodeLocationJobFacet, SqlJobFacet, \

@@ -1,6 +1,6 @@
 from airflow.contrib.operators.snowflake_operator import SnowflakeOperator
 from marquez_airflow.extractors.postgres_extractor import PostgresExtractor
-from marquez_airflow.utils import get_connection_uri, get_connection
+from marquez_airflow.utils import get_connection_uri
 
 
 class SnowflakeExtractor(PostgresExtractor):
@@ -22,7 +22,7 @@ class SnowflakeExtractor(PostgresExtractor):
         """
 
     def _get_scheme(self):
-        return f'snowflake'
+        return 'snowflake'
 
     def _get_authority(self, conn_id):
         return self.operator.get_hook()._get_conn_params()['account']
