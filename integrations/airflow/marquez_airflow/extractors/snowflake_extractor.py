@@ -1,6 +1,6 @@
 from airflow.contrib.operators.snowflake_operator import SnowflakeOperator
 from marquez_airflow.extractors.postgres_extractor import PostgresExtractor
-from marquez_airflow.utils import get_connection_uri, get_connection  # noqa
+from marquez_airflow.utils import get_connection_uri  # noqa
 
 
 class SnowflakeExtractor(PostgresExtractor):

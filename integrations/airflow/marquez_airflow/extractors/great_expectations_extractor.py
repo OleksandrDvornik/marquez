@@ -111,7 +111,7 @@ class GreatExpectationsExtractorImpl(BaseExtractor):
                 source=Source(
                     scheme=scheme,
                     authority=authority,
-                    namespace=namespace if not scheme and authority else None
+                    name=namespace if not scheme and authority else None
                 ),
                 name=name,
                 custom_facets={

@@ -24,26 +24,27 @@ class Source:
             scheme: Optional[str] = None,
             authority: Optional[str] = None,
             connection_url: Optional[str] = None,
-            namespace: Optional[str] = None
+            name: Optional[str] = None
     ):
         self.scheme = scheme
         self.authority = authority
-        self.namespace = namespace
+        self._name = name
         self.connection_url = connection_url
 
-        if (scheme or authority) and namespace:
+        if (scheme or authority) and name:
             raise RuntimeError('scheme + authority and namespace are exclusive options')
 
     def __eq__(self, other):
-        return self.to_namespace() and \
-            self.connection_url == other.connection_url
+        return self.name == other.name and \
+               self.connection_url == other.connection_url
 
     def __repr__(self):
         return f"Source({self.scheme!r}://{self.authority!r} - {self.connection_url!r})"
 
-    def to_namespace(self) -> str:
-        if self.namespace:
-            return self.namespace
+    @property
+    def name(self) -> str:
+        if self._name:
+            return self._name
         if self.authority:
             return f'{self.scheme}://{self.authority}'
         return f'{self.scheme}:'
@@ -140,10 +141,10 @@ class Dataset:
         return f"Dataset({self.source!r},{self.name!r}, \
                          {self.fields!r},{self.description!r})"
 
-    def to_openlineage_dataset(self, namespace: str) -> OpenLineageDataset:
+    def to_openlineage_dataset(self) -> OpenLineageDataset:
         facets = {
             "dataSource": DataSourceDatasetFacet(
-                self.name,
+                self.source.name,
                 self.source.connection_url
             )
         }
@@ -168,7 +169,7 @@ class Dataset:
             facets.update(self.custom_facets)
 
         return OpenLineageDataset(
-            namespace=namespace,
+            namespace=self.source.name,
             name=self.name,
             facets=facets
         )

@@ -97,12 +97,14 @@ TASK = SnowflakeOperator(
 
 
 @mock.patch('marquez_airflow.extractors.snowflake_extractor.SnowflakeExtractor._get_table_schemas')
-@mock.patch('marquez_airflow.extractors.snowflake_extractor.get_connection')
-def test_extract(get_connection, mock_get_table_schemas):
+def test_extract(mock_get_table_schemas):
     mock_get_table_schemas.side_effect = \
         [[DB_TABLE_SCHEMA], NO_DB_TABLE_SCHEMA]
 
-    get_connection.account.return_value = 'test_account'
+    TASK.get_hook = mock.MagicMock()
+    TASK.get_hook.return_value._get_conn_params.return_value = {
+        'account': 'test_account'
+    }
 
     expected_inputs = [
         Dataset(
@@ -132,9 +134,8 @@ def test_extract(get_connection, mock_get_table_schemas):
 
 @mock.patch('snowflake.connector.connect')
 def test_get_table_schemas(mock_conn):
-    # (1) Define a simple hook class for testing
-    class TestSnowflakeHook(SnowflakeHook):
-        conn_name_attr = 'test_conn_id'
+    # (1) Define hook mock for testing
+    TASK.get_hook = mock.MagicMock()
 
     # (2) Mock calls to postgres
     rows = [
@@ -145,15 +146,12 @@ def test_get_table_schemas(mock_conn):
         (DB_SCHEMA_NAME, DB_TABLE_NAME.name, 'ends_on', 5, 'timestamp')
     ]
 
-    mock_conn.return_value \
+    TASK.get_hook.return_value \
+        .get_conn.return_value \
         .cursor.return_value \
         .fetchall.return_value = rows
 
-    # (3) Mock conn for hook
-    hook = TestSnowflakeHook()
-    hook.conn = mock_conn
-
-    # (4) Extract table schemas for task
+    # (3) Extract table schemas for task
     extractor = SnowflakeExtractor(TASK)
     table_schemas = extractor._get_table_schemas(table_names=[DB_TABLE_NAME])
 

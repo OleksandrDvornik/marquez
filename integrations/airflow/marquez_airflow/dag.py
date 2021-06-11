@@ -43,7 +43,7 @@ _MARQUEZ = MarquezAdapter()
 
 class DAG(airflow.models.DAG, LoggingMixin):
     def __init__(self, *args, extractor_mapper=None, **kwargs):
-        self.log.debug("marquez-airflow dag starting")
+        self.log.info("marquez-airflow dag starting")
         super().__init__(*args, **kwargs)
         self.extractors = {}
 
@@ -86,7 +86,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
     # Doing it other way would require to hook up to
     # scheduler, where tasks are actually started
     def _register_dagrun(self, dagrun: DagRun, is_external_trigger: bool, execution_date: str):
-        self.log.debug(f"self.task_dict: {self.task_dict}")
+        self.log.info(f"self.task_dict: {self.task_dict}")
         # Register each task in the DAG
         for task_id, task in self.task_dict.items():
             t = self._now_ms()
@@ -224,9 +224,9 @@ class DAG(airflow.models.DAG, LoggingMixin):
                     return step[0]
 
             except Exception as e:
-                self.log.error(
+                self.log.exception(
                     f'Failed to extract metadata {e} {task_info}',
-                    exc_info=True)
+                )
         else:
             self.log.warning(
                 f'Unable to find an extractor. {task_info}')

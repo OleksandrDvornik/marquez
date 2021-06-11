@@ -52,6 +52,7 @@ public class OpenLineageResource extends BaseResource {
   public void create(
       @Valid @NotNull LineageEvent event, @Suspended final AsyncResponse asyncResponse)
       throws JsonProcessingException, SQLException {
+    log.info(event.toString());
     openLineageService
         .createAsync(event)
         .whenComplete(

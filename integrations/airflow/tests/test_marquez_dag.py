@@ -232,7 +232,8 @@ class TestFixtureDummyExtractor(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
         scheme="dummy",
-        connection_url="http://dummy/source/url"
+        authority="localhost:1234",
+        connection_url="dummy://localhost:1234?query_tag=asdf"
     )
 
     def __init__(self, operator):
@@ -262,7 +263,8 @@ class TestFixtureDummyExtractorOnComplete(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
         scheme="dummy",
-        connection_url="http://dummy/source/url"
+        authority="localhost:1234",
+        connection_url="dummy://localhost:1234?query_tag=asdf"
     )
 
     def __init__(self, operator):
@@ -375,16 +377,16 @@ def test_marquez_dag_with_extractor(
                 "sourceCodeLocation": SourceCodeLocationJobFacet("", completed_task_location)
             }),
             PRODUCER,
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_input1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })],
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_output1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_output1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_output1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })]
         )
@@ -408,16 +410,16 @@ def test_marquez_dag_with_extractor(
             Run(run_id),
             Job("default", f"{dag_id}.{TASK_ID_COMPLETED}"),
             PRODUCER,
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_input1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })],
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_output1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_output1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_output1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })]
         )
@@ -512,12 +514,12 @@ def test_marquez_dag_with_extract_on_complete(
             job=Job("default", f"{dag_id}.{TASK_ID_COMPLETED}"),
             producer=PRODUCER,
             inputs=[OpenLineageDataset(
-                namespace='default',
+                namespace='dummy://localhost:1234',
                 name='schema.extract_on_complete_input1',
                 facets={
                     'dataSource': DataSourceDatasetFacet(
-                        name='schema.extract_on_complete_input1',
-                        uri='http://dummy/source/url'
+                        name='dummy://localhost:1234',
+                        uri='dummy://localhost:1234?query_tag=asdf'
                     ),
                     'schema': SchemaDatasetFacet(
                         fields=[
@@ -528,12 +530,12 @@ def test_marquez_dag_with_extract_on_complete(
                 })
             ],
             outputs=[OpenLineageDataset(
-                namespace='default',
+                namespace='dummy://localhost:1234',
                 name='extract_on_complete_output1',
                 facets={
                     'dataSource': DataSourceDatasetFacet(
-                        name='extract_on_complete_output1',
-                        uri='http://dummy/source/url'
+                        name='dummy://localhost:1234',
+                        uri='dummy://localhost:1234?query_tag=asdf'
                     )
                 })
             ]
@@ -545,7 +547,8 @@ class TestFixtureDummyExtractorWithMultipleSteps(BaseExtractor):
     operator_class = TestFixtureDummyOperator
     source = Source(
         scheme='dummy',
-        connection_url="http://dummy/source/url"
+        authority='localhost:1234',
+        connection_url="dummy://localhost:1234?query_tag=asdf"
     )
 
     def __init__(self, operator):
@@ -653,10 +656,10 @@ def test_marquez_dag_with_extractor_returning_two_steps(
                 "sourceCodeLocation": SourceCodeLocationJobFacet("", completed_task_location)
             }),
             PRODUCER,
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_input1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })],
             []
@@ -681,10 +684,10 @@ def test_marquez_dag_with_extractor_returning_two_steps(
             Run(run_id),
             Job("default", f"{dag_id}.{TASK_ID_COMPLETED}"),
             PRODUCER,
-            [OpenLineageDataset(DAG_NAMESPACE, 'extract_input1', {
+            [OpenLineageDataset('dummy://localhost:1234', 'extract_input1', {
                 "dataSource": DataSourceDatasetFacet(
-                    name='extract_input1',
-                    uri='http://dummy/source/url'
+                    name='dummy://localhost:1234',
+                    uri='dummy://localhost:1234?query_tag=asdf'
                 )
             })],
             []
@@ -781,8 +784,9 @@ TestFixtureHookingDummyOperator.execute = wrap_callback(TestFixtureHookingDummyO
 class TestFixtureHookingDummyExtractor(BaseExtractor):
     operator_class = TestFixtureHookingDummyOperator
     source = Source(
-        scheme="dummy",
-        connection_url="http://dummy/source/url")
+        scheme="dummy://localhost:1234",
+        connection_url="dummy://localhost:1234?query_tag=asdf"
+    )
 
     def __init__(self, operator):
         super().__init__(operator)

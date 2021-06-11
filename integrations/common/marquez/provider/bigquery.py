@@ -180,9 +180,7 @@ class BigQueryDatasetsProvider:
             self._bq_table_name(bq_t) for bq_t in bq_input_tables
         ]
         sources = [
-            self._source(
-                bq_t
-            ) for bq_t in bq_input_tables
+            self._source() for bq_t in bq_input_tables
         ]
         try:
             return [
@@ -209,9 +207,7 @@ class BigQueryDatasetsProvider:
             return None
 
         output_table_name = self._bq_table_name(bq_output_table)
-        source = self._source(
-            bq_output_table
-        )
+        source = self._source()
 
         table_schema = self._get_table_safely(output_table_name)
         if table_schema:
@@ -263,11 +259,10 @@ class BigQueryDatasetsProvider:
             columns=columns
         )
 
-    def _source(self, bq_table) -> Source:
-        table_name = self._bq_table_name(bq_table)
+    def _source(self) -> Source:
         return Source(
             scheme='bigquery',
-            connection_url=_BIGQUERY_CONN_URL.format(table_name)
+            connection_url='bigquery:'
         )
 
     def _bq_table_name(self, bq_table):

@@ -14,6 +14,7 @@ import logging
 import os
 import subprocess
 import json
+from urllib.parse import urlparse, urlunparse
 
 import airflow
 from airflow.models import Connection
@@ -130,8 +131,14 @@ def get_connection_uri(conn_id):
     the Airflow's connection table.
     """
     conn_uri = os.environ.get('AIRFLOW_CONN_' + conn_id.upper())
-    log.debug(conn_uri)
-    return conn_uri or get_connection(conn_id).get_uri()
+    if not conn_uri:
+        conn_uri = get_connection(conn_uri).get_uri()
+
+    parsed = urlparse(conn_uri)
+    if parsed.username or parsed.password:
+        parsed._replace(netloc=f'{parsed.hostname}:{parsed.port}')
+    return urlunparse(parsed)
+
 
 
 def get_normalized_postgres_connection_uri(conn_id):

@@ -12,17 +12,13 @@ from openlineage.run import Dataset as OpenLineageDataset
 def source():
     return Source(
         scheme="dummy",
-        connection_url="http://dummy/source/url"
+        authority="localhost:1234",
+        connection_url="dummy://localhost:1234"
     )
 
 
 @pytest.fixture
-def table_schema():
-    source = Source(
-        scheme="dummy",
-        connection_url="http://dummy/source/url"
-    )
-
+def table_schema(source):
     schema_name = 'public'
     table_name = DbTableName('discounts')
     columns = [
@@ -66,17 +62,17 @@ def test_dataset_from(source):
 
 
 def test_dataset_to_openlineage(table_schema):
-    namespace = 'namespace'
+    source_name = 'dummy://localhost:1234'
     source, columns, schema = table_schema
 
     dataset_schema = Dataset.from_table_schema(source, schema)
-    assert dataset_schema.to_openlineage_dataset(namespace) == OpenLineageDataset(
-        namespace=namespace,
+    assert dataset_schema.to_openlineage_dataset() == OpenLineageDataset(
+        namespace=source_name,
         name='public.discounts',
         facets={
             'dataSource': DataSourceDatasetFacet(
-                name='public.discounts',
-                uri='http://dummy/source/url'
+                name=source_name,
+                uri=source_name
             ),
             'schema': SchemaDatasetFacet(
                 fields=[

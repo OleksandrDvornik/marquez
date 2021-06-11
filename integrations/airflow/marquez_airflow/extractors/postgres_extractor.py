@@ -11,6 +11,7 @@
 # limitations under the License.
 from contextlib import closing
 from typing import Optional
+from urllib.parse import urlparse
 
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.postgres_operator import PostgresOperator
@@ -97,8 +98,12 @@ class PostgresExtractor(BaseExtractor):
         return 'postgres'
 
     def _get_authority(self, conn_id):
-        conn = get_connection(conn_id)
-        return f'{conn.host}:{conn.port}'
+        try:
+            conn = get_connection(conn_id)
+            return f'{conn.host}:{conn.port}'
+        except Exception:
+            parsed = urlparse(self._get_connection_uri(conn_id))
+            return f'{parsed.hostname}:{parsed.port}'
 
     def _conn_id(self):
         return self.operator.postgres_conn_id
