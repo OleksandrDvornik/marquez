@@ -39,7 +39,7 @@ IF_NOT_EXISTS_TASK_ID = 'if_not_exists'
 INSERT_TASK_ID = 'insert'
 
 # SOURCE
-SOURCE_NAME = 'postgres:5432'
+SOURCE_NAME = 'postgres://postgres:5432'
 CONNECTION_URL = \
     'postgres://food_delivery:food_delivery@postgres:5432/food_delivery'
 
